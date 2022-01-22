@@ -30,10 +30,10 @@ class action_card : public base_card
 {
     public:
         action_card();
-        void do_attack(player p1); // this is equivalent to play card to attack opponent.
+        void do_attack(player &); // this is equivalent to play card to attack opponent.
         void change_strength(); // if a player want to change the cards strength instead of playing card player can try to change attack level and attack_level will set randomly.
         void display();
-        int comparecard();
+        int compare_card();
 
     protected:
         int attack_level;
@@ -47,7 +47,7 @@ class spell_card : public base_card
         spell_card(const spell_card & source);
         ~spell_card();
         void generate_spell(); // from the pool of spell player can get the spell randomly for play.
-        void cast_spell(); // playing spell over the oponents
+        void cast_spell(player &); // playing spell over the oponents
         void display();
 
     protected:
@@ -63,7 +63,7 @@ class defense_card : public base_card  // this defense card can be played agains
         ~defense_card();
         int defend_spell(); // if a strenth is 0 but spell is not null this method will counter the spell card.
         void create_new_spell(); // player can try to get a new spell to play in future round
-        int defend_attack(); //player can play this card to defend attack and based on the strength it will be decided who will loose the life point and how many.
+        int defend_attack(player &); //player can play this card to defend attack and based on the strength it will be decided who will loose the life point and how many.
 
     protected:
         char * spell;
@@ -82,6 +82,11 @@ class node
         node * next;
 };
 
+
+
+
+
+
 class deck // collection of cards will be put together for each player to draw
 {
     public:
@@ -90,38 +95,54 @@ class deck // collection of cards will be put together for each player to draw
         ~deck();
         void initiate(); // at the begining all the cards will be generated and shuffled.
         void display();
-        void addcard(base_card* );
+        void add_card(base_card * );
         base_card draw();// this will return a card to the player.
         void remove_card();
 
 
     private:
         node * head;
-        int totalcard;
+        int total_card;
 };
+
+
+
+
+
+
 class hand
 {
     public:
         hand();
         ~hand();
-        void displayhand();
-        void addcard();
-        void removecard(int index);
+        void display_hand();
+        void add_card();
+        void remove_card(int index);
 
     private:
-        node* head;
-        int totalcardinhand;
+        node * head;
+        int total_card_in_hand;
 };
+
+
+
 class player
 {
     public:
+        player();
+        player(const player & source);
         player(char *name);
         void add_card(base_card a_card);
+        void got_attack(int );
+        void got_spell(char*);
         void display_hand();
     private:
         char* name;
         hand * my_hand;
         int life_point;
+        int attack_recieved;
+        char * spell_recieved;
+        bool counter_play_needed;
 
 };
 
