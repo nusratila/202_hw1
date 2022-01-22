@@ -3,7 +3,6 @@
 // Assignment 1 : Two player game
 // The purpose of the file  is to create an object oriented program for a simple two-player game that allows players to use 'cards' which will be randomly picked to cast spells, attack opponent and defend themselves.
 
-
 #include <iostream>
 #include <cctype>
 #include <cstring>
@@ -15,8 +14,9 @@ class base_card
     public:
         base_card(char * );
         base_card(const base_card & source);
+        base_card();
         ~base_card();
-        void return_to_pull(deck *); // this method should put the card to the deck.
+        void return_to_deck(deck *); // this method should put the card to the deck.
         char* get_card_id();
         void display();
 
@@ -90,7 +90,7 @@ class deck // collection of cards will be put together for each player to draw
         ~deck();
         void initiate(); // at the begining all the cards will be generated and shuffled.
         void display();
-        void addcard(base_card *);
+        void addcard(base_card* );
         base_card draw();// this will return a card to the player.
         void remove_card();
 
