@@ -4,17 +4,42 @@
 // The purpose of the file  is to impliment all the methods under each class.
 
 #include "two_player.h"
+#include <algorithm>
+#include <iostream>
+#include <fstream>
+#include <string>
 using namespace std;
 
-
-
-//base card methods
-//constructor
-base_card::base_card()
+void get_shuffled_index(int *arr, int n)
 {
-    card_id = NULL;
+    //int arr[n];
+    for(int i = 0 ; i<n; i++)
+    {
+        arr[i]=i+1;
+    }
+    random_shuffle(arr,arr+n);
+    for (int i = 0;i<n;i++)
+    {
+        cout<<arr[i]<<endl;
+    }
+    cout<<arr<<endl;
+    //return arr;
 }
 
+//base card methods
+
+//constructor with argument
+base_card::base_card(char* unique_name)
+{
+    if(unique_name)
+    {
+        strcpy(card_id,unique_name);
+    }
+}
+base_card::base_card()
+{
+   card_id = NULL;
+}
 //destructor
 base_card::~base_card()
 {
@@ -36,14 +61,7 @@ base_card::base_card(const base_card & source)
 }
 
 
-//constructor with argument
-base_card::base_card(char* unique_name)
-{
-    if(unique_name)
-    {
-        strcpy(card_id,unique_name);
-    }
-}
+
 
 
 
@@ -56,11 +74,15 @@ void base_card::display()
 
 
 
-void base_card::return_to_deck(deck *gamedeck)
+void base_card::return_to_deck(deck &gamedeck)
 {
-    gamedeck->add_card(this);
+    gamedeck.add_card(this);
 }
 
+char * base_card::get_card_id()
+{
+    return card_id;
+}
 
 
 
@@ -70,8 +92,9 @@ void base_card::return_to_deck(deck *gamedeck)
 
 //action card methods
 //constructor
-action_card::action_card()
+action_card::action_card(char * unique_name)
 {
+    //base_card(unique_name);
     //set attack level to a random number between 1~5;
     attack_level = rand()%4 +1;
 }
@@ -102,8 +125,9 @@ void action_card::do_attack(player &  p)
 
 //spell_card methods
 //constructor
-spell_card::spell_card()
+spell_card::spell_card(char * unique_name)
 {
+    base_card(unique_name);
     spell = NULL;
 }
 
@@ -120,7 +144,10 @@ spell_card::spell_card(const spell_card & source)
         spell = NULL;
 }
 
+spell_card::~spell_card()
+{
 
+}
 void spell_card::cast_spell(player &p)
 {
     p.got_spell(spell);
@@ -134,6 +161,11 @@ defense_card::defense_card()
 {
     spell = NULL;
     strength = 0;
+    base_card(NULL);
+}
+defense_card::~defense_card()
+{
+
 }
 
 
@@ -160,18 +192,69 @@ defense_card::defense_card(const defense_card & source)
 
 //deck methods
 //constructor
+
 deck::deck()
 {
+    cout<< "deck called";
+    num_spells =0;
     head = NULL;
     total_card = 0;
+    //reading the spell file for list of spells
+    string line;
+    ifstream spellfile("spell.txt");
+
+    if(spellfile.is_open())
+    {
+        while(getline(spellfile,line))
+            num_spells++;
+        spellfile.close();
+    }
+    else
+        cout<<"can not open spell file"<<endl;
+
+    cout<< "t c :"<< num_spells<<endl;
+    allspells = new char* [num_spells];
+    spellfile.open("spell.txt");
+    if(spellfile.is_open())
+    {
+        int i = 0;
+        while(getline(spellfile,line))
+        {
+            cout<<line<<line.length()<<  endl;
+            allspells[i] = new char[line.length()];
+            strcpy(allspells[i],line.c_str());
+            i++;
+        }
+        spellfile.close();
+
+    }
+    else
+    {
+        cout<<"can not open spell file"<<endl;
+    }
+    for(int i = 0; i<num_spells;i++)
+    {
+        cout<<allspells[i]<<endl;
+    }
+
+}
+void deck::create_cards()
+{
 
 }
 
 //copy constructor
 deck :: deck(const deck & source)
 {
+
 }
 
+deck::~deck()
+{
+    if(allspells)
+        delete [] allspells;
+
+}
 //ilplimentation of add)card method of deck class
 void deck::add_card(base_card* a_card)
 {
@@ -240,9 +323,52 @@ void player::got_spell(char* spell_rcvd)
     }
     counter_play_needed =true;
 }
+game_controller::game_controller(int num_card )
+{
+    num_of_card_each_type = num_card;
+    a_deck = new deck();
+    p[0] = new player();
+    p[1] = new player();
+}
+game_controller::~game_controller()
+{
 
+}
 
+void game_controller::generate_deck()
+{
+    int totalcards = 3*num_of_card_each_type;
+    int  index[totalcards];
+    get_shuffled_index(index,totalcards);
+    base_card all_cards[totalcards];
+    int temp_index=0;
+    for(int i = 0 ; i<num_of_card_each_type;i++)
+    {
+        action_card ac;
+        all_cards[temp_index] = ac;
+        //delete ac
+        temp_index++;
+    }
+    for(int i = 0 ; i<num_of_card_each_type;i++)
+    {
+        defense_card dc;
+        all_cards[temp_index] = dc;
+        //delete dc
+        temp_index++;
+    }
+    for(int i = 0 ; i<num_of_card_each_type;i++)
+    {
+        spell_card sc;
+        all_cards[temp_index] = sc;
+        //delete sc
+        temp_index++;
+    }
 
+}
+//this will intialize the game
+//shuffle cards and distribute few cards.
+void game_controller::game_initializer()
+{
 
-
+}
 

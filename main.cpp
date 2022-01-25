@@ -4,6 +4,10 @@ using namespace std;
 
 int main()
 {
+    cout<<"Hello:  This is a simple two player card game."<<endl;
+    action_card ac("ba");
+
+
 
     return 0;
 }

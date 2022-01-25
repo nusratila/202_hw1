@@ -32,7 +32,9 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="id.txt" />
 		<Unit filename="main.cpp" />
+		<Unit filename="spell.txt" />
 		<Unit filename="two_player.cpp" />
 		<Unit filename="two_player.h" />
 		<Extensions>

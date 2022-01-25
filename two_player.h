@@ -7,16 +7,18 @@
 #include <cctype>
 #include <cstring>
 #include <cstdlib>
+void get_shuffled_index(int*, int);
 class deck;
 class player;
 class base_card
 {
     public:
+        base_card();
         base_card(char * );
         base_card(const base_card & source);
-        base_card();
+
         ~base_card();
-        void return_to_deck(deck *); // this method should put the card to the deck.
+        void return_to_deck(deck &); // this method should put the card to the deck.
         char* get_card_id();
         void display();
 
@@ -29,7 +31,7 @@ class base_card
 class action_card : public base_card
 {
     public:
-        action_card();
+        action_card(char * );
         void do_attack(player &); // this is equivalent to play card to attack opponent.
         void change_strength(); // if a player want to change the cards strength instead of playing card player can try to change attack level and attack_level will set randomly.
         void display();
@@ -43,7 +45,7 @@ class action_card : public base_card
 class spell_card : public base_card
 {
     public:
-        spell_card();
+        spell_card(char *);
         spell_card(const spell_card & source);
         ~spell_card();
         void generate_spell(); // from the pool of spell player can get the spell randomly for play.
@@ -58,7 +60,7 @@ class spell_card : public base_card
 class defense_card : public base_card  // this defense card can be played against both other card.it can be either a spell defence or attack defence card.
 {
     public:
-        defense_card();
+        defense_card(char *);
         defense_card(const defense_card & source);
         ~defense_card();
         int defend_spell(); // if a strenth is 0 but spell is not null this method will counter the spell card.
@@ -90,19 +92,23 @@ class node
 class deck // collection of cards will be put together for each player to draw
 {
     public:
+
         deck();
         deck(const deck & source);
         ~deck();
-        void initiate(); // at the begining all the cards will be generated and shuffled.
+        void create_cards(); // at the begining all the cards will be generated and shuffled.
         void display();
         void add_card(base_card * );
         base_card draw();// this will return a card to the player.
         void remove_card();
+        char * get_random_spell();
 
 
     private:
         node * head;
         int total_card;
+        char ** allspells; // fire->water / spinach earthquaq->
+        int num_spells;
 };
 
 
@@ -120,7 +126,7 @@ class hand
         void remove_card(int index);
 
     private:
-        node * head;
+        node ** head;       //this will be  a array of link list. array
         int total_card_in_hand;
 };
 
@@ -132,17 +138,17 @@ class player
         player();
         player(const player & source);
         player(char *name);
-        void add_card(base_card a_card);
+        //void add_card(base_card a_card);
         void got_attack(int );
         void got_spell(char*);
-        void display_hand();
+
     private:
         char* name;
         hand * my_hand;
         int life_point;
         int attack_recieved;
         char * spell_recieved;
-        bool counter_play_needed;
+        bool counter_play_needed;  // this bool var will tell whether the player has to play any counter card like spell card or defense card.
 
 };
 
@@ -150,16 +156,20 @@ class player
 class game_controller  //'has a' relationship with class "deck"
 {
     public:
-        void game_initializer();    //initialize the game
+        game_controller(int num_of_card_each_type);
+        ~game_controller();
+        void game_initializer();    //initialize the game create two player.
+        void deal_cards();
         bool evaluate_result();     //evaluate result after each turn.It will return a bool. If any players win, then it will return true , otherwise false.
-
+        void generate_deck();       // this method will generate all cards.
         void game_play();           //run the game. It will continue till the game end. It will continuously call another function evaluate_result(). The game will be continued till evaluate_result() returns true.:w
 
 
     protected:
-        deck a_deck;
-        player p1;
-        player p2;
+        int num_of_card_each_type;
+        deck * a_deck;
+        player * p[2];
+        //player p2;
         /*
 
         char * p1_name;      //player 1
