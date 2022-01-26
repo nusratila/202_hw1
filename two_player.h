@@ -19,6 +19,7 @@ class base_card
 
         ~base_card();
         void return_to_deck(deck &); // this method should put the card to the deck.
+        void set_card_id(char * unique_name);
         char* get_card_id();
         void display();
 
@@ -31,7 +32,7 @@ class base_card
 class action_card : public base_card
 {
     public:
-        action_card(char * );
+        action_card(char*);
         void do_attack(player &); // this is equivalent to play card to attack opponent.
         void change_strength(); // if a player want to change the cards strength instead of playing card player can try to change attack level and attack_level will set randomly.
         void display();

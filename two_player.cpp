@@ -31,9 +31,10 @@ void get_shuffled_index(int *arr, int n)
 //constructor with argument
 base_card::base_card(char* unique_name)
 {
+    card_id = new char[strlen(unique_name)+1];
     if(unique_name)
     {
-        strcpy(card_id,unique_name);
+       strcpy(card_id,unique_name);
     }
 }
 base_card::base_card()
@@ -43,8 +44,11 @@ base_card::base_card()
 //destructor
 base_card::~base_card()
 {
-    delete[] card_id;
-    card_id = NULL;
+    if(card_id)
+    {
+        delete[] card_id;
+        card_id = NULL;
+    }
 }
 
 
@@ -61,8 +65,14 @@ base_card::base_card(const base_card & source)
 }
 
 
+void base_card::set_card_id(char * unique_name)
+{
+if(unique_name)
+    {
+       strcpy(card_id,unique_name);
+    }
 
-
+}
 
 
 
@@ -92,7 +102,7 @@ char * base_card::get_card_id()
 
 //action card methods
 //constructor
-action_card::action_card(char * unique_name)
+action_card::action_card(char * unique_name):base_card(unique_name)
 {
     //base_card(unique_name);
     //set attack level to a random number between 1~5;
@@ -127,7 +137,7 @@ void action_card::do_attack(player &  p)
 //constructor
 spell_card::spell_card(char * unique_name)
 {
-    base_card(unique_name);
+    //base_card(unique_name);
     spell = NULL;
 }
 
@@ -157,11 +167,11 @@ void spell_card::cast_spell(player &p)
 
 //defence-card methods
 //constructor
-defense_card::defense_card()
+defense_card::defense_card(char * unique_name)
 {
     spell = NULL;
     strength = 0;
-    base_card(NULL);
+    //base_card(NULL);
 }
 defense_card::~defense_card()
 {
@@ -344,21 +354,21 @@ void game_controller::generate_deck()
     int temp_index=0;
     for(int i = 0 ; i<num_of_card_each_type;i++)
     {
-        action_card ac;
-        all_cards[temp_index] = ac;
+        action_card ac();
+        //all_cards[temp_index] = ac;
         //delete ac
         temp_index++;
     }
     for(int i = 0 ; i<num_of_card_each_type;i++)
     {
-        defense_card dc;
+        defense_card dc("o");
         all_cards[temp_index] = dc;
         //delete dc
         temp_index++;
     }
     for(int i = 0 ; i<num_of_card_each_type;i++)
     {
-        spell_card sc;
+        spell_card sc("d");
         all_cards[temp_index] = sc;
         //delete sc
         temp_index++;
