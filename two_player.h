@@ -2,7 +2,10 @@
 // Nusrat Jahan Ila
 // Assignment 1 : Two player game
 // The purpose of the file  is to create an object oriented program for a simple two-player game that allows players to use 'cards' which will be randomly picked to cast spells, attack opponent and defend themselves.
-
+#include <algorithm>
+#include <fstream>
+#include <string>
+#include<time.h>
 #include <iostream>
 #include <cctype>
 #include <cstring>
@@ -21,8 +24,8 @@ class base_card
         void return_to_deck(deck &); // this method should put the card to the deck.
         void set_card_id(char * unique_name);
         char* get_card_id();
-        void display();
-
+        virtual void display();
+        virtual int which_card();
 
     protected:
         char * card_id;
@@ -36,8 +39,8 @@ class action_card : public base_card
         void do_attack(player &); // this is equivalent to play card to attack opponent.
         void change_strength(); // if a player want to change the cards strength instead of playing card player can try to change attack level and attack_level will set randomly.
         void display();
-        int compare_card();
-
+        //int compare_card();
+        int which_card();
     protected:
         int attack_level;
 };
@@ -49,10 +52,11 @@ class spell_card : public base_card
         spell_card(char *);
         spell_card(const spell_card & source);
         ~spell_card();
-        void generate_spell(); // from the pool of spell player can get the spell randomly for play.
+        void set_update_spell(char ** allspells, int num_spells); // from the pool of spell player can get the spell randomly for play.
         void cast_spell(player &); // playing spell over the oponents
         void display();
 
+        int which_card();
     protected:
         char * spell;
 };
@@ -67,25 +71,34 @@ class defense_card : public base_card  // this defense card can be played agains
         int defend_spell(); // if a strenth is 0 but spell is not null this method will counter the spell card.
         void create_new_spell(); // player can try to get a new spell to play in future round
         int defend_attack(player &); //player can play this card to defend attack and based on the strength it will be decided who will loose the life point and how many.
-
+        void display();
+        int which_card();
     protected:
         char * spell;
         int strength;
 
 };
 
-class node
+struct node
 {
-    public:
-        node();
-        ~node();
-
-    protected:
-        base_card a_card;
-        node * next;
+    base_card * data;
+    node * next;
 };
 
-
+class board
+{
+public:
+    board();
+    ~board();
+    void discard_to_board(base_card *& a_card);        //this is basically adding card to board
+    void discard_to_board(node * & head,base_card *& a_card);
+    base_card * get_random_card();                  // getting a random card and put back to deck will ensure shuffling.
+    void display_board();
+    void display(node*& head);
+private:
+    node * head;
+    int total_card;
+};
 
 
 
@@ -97,11 +110,14 @@ class deck // collection of cards will be put together for each player to draw
         deck();
         deck(const deck & source);
         ~deck();
-        void create_cards(); // at the begining all the cards will be generated and shuffled.
+        //void create_cards(); // at the begining all the cards will be generated and shuffled.
         void display();
-        void add_card(base_card * );
+        void display(node*& head);
+        bool hascard();
+        void add_card(base_card *& a_card );
+        void add_card(node *& head,base_card* &a_card);
         base_card draw();// this will return a card to the player.
-        void remove_card();
+        base_card*& get_card();
         char * get_random_spell();
 
 
@@ -116,7 +132,7 @@ class deck // collection of cards will be put together for each player to draw
 
 
 
-
+/*
 class hand
 {
     public:
@@ -131,7 +147,7 @@ class hand
         int total_card_in_hand;
 };
 
-
+*/
 
 class player
 {
@@ -139,13 +155,20 @@ class player
         player();
         player(const player & source);
         player(char *name);
-        //void add_card(base_card a_card);
+        void update_info(char* pname,int life_point);
+        void add_card(base_card *& a_card);                 // from the deal_card function player will get some random cards in hand.
+        void add_card(node *& head,base_card* &a_card);
+        void display_hand();                                // this will show all the cards in hand of a player.
+        void display_hand(node*& head);
+        void play_card(board *b, player *p);                  // this function will return a card selected by player and played against opponent p.
+        void pick_card_from_deck(deck* &d);
         void got_attack(int );
         void got_spell(char*);
 
     private:
         char* name;
-        hand * my_hand;
+        node ** head;
+        int cards_in_hand;
         int life_point;
         int attack_recieved;
         char * spell_recieved;
@@ -170,6 +193,7 @@ class game_controller  //'has a' relationship with class "deck"
         int num_of_card_each_type;
         deck * a_deck;
         player * p[2];
+        base_card ** all_cards;
         //player p2;
         /*
 
