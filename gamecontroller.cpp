@@ -25,12 +25,9 @@ void game_controller::generate_deck()
     int totalcards = 3*num_of_card_each_type;
     char ** allids = new char* [totalcards];
     ifstream idfile("id.txt");
-    bool file_open = false;
     string line;
     if(idfile.is_open())
     {
-        file_open = true;
-
         int i = 0;
         while(getline(idfile,line))
         {

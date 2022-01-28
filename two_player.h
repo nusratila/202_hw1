@@ -90,7 +90,7 @@ class board
 public:
     board();
     ~board();
-    void discard_to_board(base_card *& a_card);        //this is basically adding card to board
+    void discard_to_board(base_card * a_card);        //this is basically adding card to board
     void discard_to_board(node * & head,base_card *& a_card);
     base_card * get_random_card();                  // getting a random card and put back to deck will ensure shuffling.
     void display_board();

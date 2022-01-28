@@ -12,15 +12,16 @@ using namespace std;
 
 board::board()
 {
-
+    total_card=0;
+    head = NULL;
 
 }
 board::~board()
 {
 
 }
-
-void board::discard_to_board(base_card*& a_card)
+//this is basically discarding a card to board.
+void board::discard_to_board(base_card* a_card)
 {
     if(!head)
     {
@@ -32,13 +33,13 @@ void board::discard_to_board(base_card*& a_card)
     }
     discard_to_board(head,a_card);
 }
-void board::discard_to_board(node*& temp_head,base_card*& a_card)
+void board::discard_to_board(node*& head,base_card*& a_card)
 {
-    if(!temp_head->next)
+    if(!head->next)
     {
-        temp_head->next = new node;
-        temp_head->next->data = a_card;
-        temp_head->next->next = NULL;
+        head->next = new node;
+        head->next->data = a_card;
+        head->next->next = NULL;
         total_card++;
         return;
     }
@@ -46,7 +47,38 @@ void board::discard_to_board(node*& temp_head,base_card*& a_card)
 }
 base_card * board::get_random_card()
 {
+    base_card * ret ;
+    if(total_card==1)
+    {
+        ret = head->data;
+        delete head;
+        head = NULL;
+        return ret;
+    }
+    else if(total_card==0)
+    {
+        return NULL;
+    }
 
+    srand(time(0));
+    int select = rand()%total_card;
+    node * temp = head;
+    for(int i = 0 ; i<select-1 ; i++)
+        temp = temp->next;
+    node * hold = temp->next;
+    ret = hold->data;
+    if(!temp->next)
+    {
+        delete hold;
+        temp->next = NULL;
+    }
+    else
+    {
+        temp->next = temp->next->next;
+        delete hold;
+    }
+    total_card--;
+    return ret;
 }
 void board::display_board()
 {
@@ -56,7 +88,7 @@ void board::display_board()
 }
 void board::display(node*& head)
 {
-        if(head)
+    if(head)
     {
        head->data->display();
        display(head->next);

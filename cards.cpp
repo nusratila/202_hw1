@@ -93,6 +93,7 @@ void action_card::display()
 void spell_card::display()
 {
     cout<<"ID      : "<<card_id<<endl;
+    if(spell)
     cout<<"Spell   : "<<spell<<endl<<endl;
 }
 void defense_card::display()
@@ -194,7 +195,7 @@ void spell_card::set_update_spell(char ** allspells, int num_spells)
 
 //defence-card methods
 //constructor
-defense_card::defense_card(char * unique_name)
+defense_card::defense_card(char * unique_name):base_card(unique_name)
 {
     spell = NULL;
     strength = 0;

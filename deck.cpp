@@ -117,6 +117,7 @@ bool deck::hascard()                //checking if the deck has enough card to pl
 
 base_card*& deck::get_card()
 {
+    base_card * bc = NULL;
     if(head)
     {
         node * temp = head;
@@ -124,7 +125,5 @@ base_card*& deck::get_card()
         total_card--;
         return (temp->data);
     }
-
-
-
+    return bc;
 }
