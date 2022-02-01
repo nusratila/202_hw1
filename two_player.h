@@ -10,61 +10,79 @@
 #include <cctype>
 #include <cstring>
 #include <cstdlib>
+#include <unistd.h>
+//this function is randomzi
 void get_shuffled_index(int*, int);
 class deck;
 class player;
+const int INPUT_SIZE = 100;
+const int CARD_EACH_TYPE = 13;
 class base_card
 {
     public:
         base_card();
         base_card(char * );
         base_card(const base_card & source);
-
+        void test()
+        {
+            //cout<<"hello";
+            return;
+        }
         ~base_card();
-        void return_to_deck(deck &); // this method should put the card to the deck.
         void set_card_id(char * unique_name);
         char* get_card_id();
-        virtual void display();
-        virtual int which_card();
+        virtual void change_card(char ** allspells, int num_spells);
+        virtual void display()=0;
+        virtual int which_card()=0;                 // this virtual function helps to identify the card type runtime.
+        // Below functions implemented in derived class as needed
+        virtual void do_attack(player &);
+        virtual void cast_spell(player &);
+        virtual char* get_spell();
+        virtual int get_strength();
 
     protected:
-        char * card_id;
+        char * card_id;             //this is unique id for each card. each card should be assigned a id without a duplicate.
 };
 
 //Three derived classes from base_card: class action_card, class spell_card and class defense_card
 class action_card : public base_card
 {
     public:
+        action_card();
         action_card(char*);
         void do_attack(player &); // this is equivalent to play card to attack opponent.
-        void change_strength(); // if a player want to change the cards strength instead of playing card player can try to change attack level and attack_level will set randomly.
+        void change_card(char ** allspells, int num_spells); // if a player want to change the cards strength instead of playing card player can try to change attack level and attack_level will set randomly.
         void display();
+        action_card(const base_card &src);
         //int compare_card();
         int which_card();
     protected:
-        int attack_level;
+        int attack_level;           // this indicates the ability to attack opponent which can cause the opponent to loose life points.
 };
 
 
 class spell_card : public base_card
 {
     public:
+        spell_card();
         spell_card(char *);
         spell_card(const spell_card & source);
         ~spell_card();
-        void set_update_spell(char ** allspells, int num_spells); // from the pool of spell player can get the spell randomly for play.
+        void change_card(char ** allspells, int num_spells); // from the pool of spell player can get the spell randomly for play.
         void cast_spell(player &); // playing spell over the oponents
         void display();
 
         int which_card();
     protected:
-        char * spell;
+        char * spell;               // spell is different type of attack.
 };
 
-
+//defense card must be played as an answer to an attack which happened when other player plays an action / spell card.
+//An instance of this card either can defend action card or defend against spell. can not be both together.
 class defense_card : public base_card  // this defense card can be played against both other card.it can be either a spell defence or attack defence card.
 {
     public:
+        defense_card();
         defense_card(char *);
         defense_card(const defense_card & source);
         ~defense_card();
@@ -72,34 +90,22 @@ class defense_card : public base_card  // this defense card can be played agains
         void create_new_spell(); // player can try to get a new spell to play in future round
         int defend_attack(player &); //player can play this card to defend attack and based on the strength it will be decided who will loose the life point and how many.
         void display();
+        char* get_spell();
+        int get_strength();
         int which_card();
+        void change_card(char ** allspells, int num_spells);
     protected:
         char * spell;
         int strength;
 
 };
 
+//node is for generating link list same data type is used by all link list used in this program.
 struct node
 {
-    base_card * data;
-    node * next;
+    base_card * data;           // this data can store a card . to make it generic base_card is used instead of any derived card class.
+    node * next;                //next pointer is used to chaining the linked list used.
 };
-
-class board
-{
-public:
-    board();
-    ~board();
-    void discard_to_board(base_card * a_card);        //this is basically adding card to board
-    void discard_to_board(node * & head,base_card *& a_card);
-    base_card * get_random_card();                  // getting a random card and put back to deck will ensure shuffling.
-    void display_board();
-    void display(node*& head);
-private:
-    node * head;
-    int total_card;
-};
-
 
 
 
@@ -110,97 +116,86 @@ class deck // collection of cards will be put together for each player to draw
         deck();
         deck(const deck & source);
         ~deck();
-        //void create_cards(); // at the begining all the cards will be generated and shuffled.
-        void display();
+        void display();                         // display the whole deck of cards.
         void display(node*& head);
-        bool hascard();
-        void add_card(base_card *& a_card );
-        void add_card(node *& head,base_card* &a_card);
-        base_card draw();// this will return a card to the player.
-        base_card*& get_card();
-        char * get_random_spell();
+        int get_card_count();                   // it returns the whole cards in the list.
+        void add_card(base_card *a_card );      // This method adds card to the deck.
+        void add_card(node *& head,base_card* a_card);
+        base_card* get_card();
+        void delete_allcards();
+
 
 
     private:
+        void delete_allcards(node*& head);
         node * head;
-        int total_card;
-        char ** allspells; // fire->water / spinach earthquaq->
-        int num_spells;
+        int deck_card;
+
 };
 
 
-
-
-
-/*
-class hand
-{
-    public:
-        hand();
-        ~hand();
-        void display_hand();
-        void add_card();
-        void remove_card(int index);
-
-    private:
-        node ** head;       //this will be  a array of link list. array
-        int total_card_in_hand;
-};
-
-*/
 
 class player
 {
     public:
         player();
+        ~player();
         player(const player & source);
+        void deep_copy_head (node* h,int index);
         player(char *name);
-        void update_info(char* pname,int life_point);
-        void add_card(base_card *& a_card);                 // from the deal_card function player will get some random cards in hand.
-        void add_card(node *& head,base_card* &a_card);
+        void update_info(char* pname,int life_point,int card_capacity);
+        void add_card(base_card * a_card);                 // from the deal_card function player will get some random cards in hand.
         void display_hand();                                // this will show all the cards in hand of a player.
+        void display_hand(int card_type);                    // this will show specific types of the cards.
         void display_hand(node*& head);
-        void play_card(board *b, player *p);                  // this function will return a card selected by player and played against opponent p.
-        void pick_card_from_deck(deck* &d);
+        void play_attack(deck &b, player &p,int card_type,char * card_id);                  // this function will return a card selected by player and played against opponent p.
+        int play_defense(deck &b,char * card_id);                  // this function will return a card selected by player and played against opponent p.
+        void play_update_card(char** allspells,int num_spells,char* card_id,int card_type);
+        void pick_card_from_deck(deck *&d);
+        base_card * find_delete_card(node*&head, char*& id,bool do_delete);
         void got_attack(int );
         void got_spell(char*);
+        int get_life_point();
+        bool counter_play_needed();
+        char * getname();
+        void delete_allcards(int index);
 
     private:
+        void delete_allcards(node*& head);
+        void add_card(node *& head,base_card* &a_card);
+        int max_card;
         char* name;
-        node ** head;
-        int cards_in_hand;
-        int life_point;
-        int attack_recieved;
-        char * spell_recieved;
-        bool counter_play_needed;  // this bool var will tell whether the player has to play any counter card like spell card or defense card.
+        node ** head;               //this array of link list head pointer stores all the cards a player has.
+        int cards_in_hand;          //all the time each player will have the same number of cards in hand.
+        int life_point;             //player life point is assigned during initialization
+        int attack_recieved;        // one player can attack other player. this is updated when this player recieve attack
+        char * spell_recieved;      // this stores the spell recieved from other player.
+        //bool counter_play_needed;  // this bool var will tell whether the player has to play any counter card like spell card or defense card.
 
 };
 
 
-class game_controller  //'has a' relationship with class "deck"
+class game_controller  //'has a' relationship with class "deck" and "player" class
 {
     public:
-        game_controller(int num_of_card_each_type);
+        game_controller();
+        game_controller(int num_of_card_each_type);         // total card will be 3 times of each type. in the id file exact same card id should be given.
         ~game_controller();
-        void game_initializer();    //initialize the game create two player.
-        void deal_cards();
-        bool evaluate_result();     //evaluate result after each turn.It will return a bool. If any players win, then it will return true , otherwise false.
-        void generate_deck();       // this method will generate all cards.
         void game_play();           //run the game. It will continue till the game end. It will continuously call another function evaluate_result(). The game will be continued till evaluate_result() returns true.:w
+        void show_deck();
+        void generate_deck();       // this method will generate all cards.
 
-
-    protected:
-        int num_of_card_each_type;
-        deck * a_deck;
+    private:
+        void deal_cards(int n);
+        bool evaluate_result();     //evaluate result after each turn.It will return a bool. If any players win, then it will return true , otherwise false.
+        int num_of_card_each_type;  //user has the option to choose how many cards to play with by setting this variable during object creation.
+        deck * b_deck;              //one deck is used as board or discard pile
+        deck * a_deck;              //other one for picking up card.
         player * p[2];
-        base_card ** all_cards;
-        //player p2;
-        /*
+        base_card ** all_cards;     // array of all cards it instantiates with generate_deck() method call.
+        char ** allspells;          // all the spells read from the file and stores here for use during game play.
+        int num_spells;             // number of total spells that read from the file.
+        int winner;                 //this is to track who is winner.
 
-        char * p1_name;      //player 1
-        char * p2_name;      //player 2
-        base_card * p1_hand;    //hand of player one
-        base_card * p2_hand;    //hand ofplayer 2
-        */
 };
 

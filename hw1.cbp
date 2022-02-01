@@ -32,7 +32,11 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="cards.cpp" />
+		<Unit filename="deck.cpp" />
+		<Unit filename="gamecontroller.cpp" />
 		<Unit filename="id.txt" />
+		<Unit filename="learning.txt" />
 		<Unit filename="main.cpp" />
 		<Unit filename="spell.txt" />
 		<Unit filename="two_player.cpp" />

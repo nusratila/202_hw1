@@ -48,6 +48,7 @@ void board::discard_to_board(node*& head,base_card*& a_card)
 base_card * board::get_random_card()
 {
     base_card * ret ;
+    // if there is only one card return the card and set head to NULL
     if(total_card==1)
     {
         ret = head->data;
@@ -55,12 +56,12 @@ base_card * board::get_random_card()
         head = NULL;
         return ret;
     }
-    else if(total_card==0)
+    else if(total_card==0)      // if there is 0 card returning NULL.
     {
         return NULL;
     }
 
-    srand(time(0));
+    srand(time(0));             //This seed ensures a true random number generation it is using current time as seed.
     int select = rand()%total_card;
     node * temp = head;
     for(int i = 0 ; i<select-1 ; i++)

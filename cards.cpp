@@ -1,4 +1,4 @@
-// 01/18/2022
+// 01/31/2022
 // Nusrat Jahan Ila
 // Assignment 1 : Two player game
 // The purpose of the file  is to impliment all the methods under all cards.
@@ -6,7 +6,7 @@
 #include "two_player.h"
 
 using namespace std;
-
+const int ATTACK_LEVEL=4;
 //base card methods
 
 //constructor with argument
@@ -33,6 +33,23 @@ base_card::~base_card()
 }
 
 
+void base_card::do_attack(player &)
+{
+    return;
+}
+void base_card::cast_spell(player &)
+{
+    return;
+}
+char* base_card::get_spell()
+{
+    return NULL;
+}
+int base_card::get_strength()
+{
+    return -1;
+}
+
 //copy constructor
 base_card::base_card(const base_card & source)
 {
@@ -45,11 +62,9 @@ base_card::base_card(const base_card & source)
         card_id = NULL;
 }
 
+
 //virtual function and its implementation in the derived class
-int  base_card::which_card()
-{
-    return -1;
-}
+
 int action_card::which_card()
 {
     return 0;
@@ -80,40 +95,51 @@ char* base_card::get_card_id()
 }
 
 
+void base_card::change_card(char ** allspells, int num_spells)
+{
+
+}
+
 
 void base_card::display()
 {
     printf("card unique id is: %s\n", card_id);
 }
+
+
+
 void action_card::display()
 {
-    cout<<"ID      : "<<card_id<<endl;
-    cout<<"Strength: "<<attack_level<<endl<<endl;
+    cout<<"Action#    ID: "<<card_id<<"     Strength: "<<attack_level<<endl;
 }
 void spell_card::display()
 {
-    cout<<"ID      : "<<card_id<<endl;
+    cout<<"Spell#     ID: "<<card_id;
     if(spell)
-    cout<<"Spell   : "<<spell<<endl<<endl;
+        cout<<"     Spell: "<<spell;
+    cout<<endl;
 }
 void defense_card::display()
 {
-        cout<<"ID      : "<<card_id<<endl;
+    cout<<"Defense#   ID: "<<card_id;
     if(spell)
-        cout<<"Spell  : "<<spell<<endl<<endl;
+        cout<<"     Spell: "<<spell;
     if(strength)
-        cout<<"Defense: "<<strength<<endl<<endl;
+        cout<<"     Defense: "<<strength;
+    cout<<endl;
 }
 
 
 
-void base_card::return_to_deck(deck &gamedeck)
+
+
+
+/*
+action_card::action_card(const action_card &src)
 {
-    //gamedeck.add_card(this);
+
 }
-
-
-
+*/
 
 
 
@@ -122,18 +148,22 @@ void base_card::return_to_deck(deck &gamedeck)
 
 //action card methods
 //constructor
+action_card::action_card()
+{
+
+}
 action_card::action_card(char * unique_name):base_card(unique_name)
 {
     //base_card(unique_name);
     //set attack level to a random number between 1~5;
-    attack_level = rand()%4 +1;
+    attack_level = rand()%ATTACK_LEVEL +1;
 }
 
 
 //implimentation of change_strength method
-void action_card::change_strength()
+void action_card::change_card(char ** allspells, int num_spells)
 {
-    attack_level = rand()%4 +1;
+    attack_level = rand()%ATTACK_LEVEL +1;
 }
 
 void action_card::do_attack(player &  p)
@@ -153,6 +183,10 @@ void action_card::do_attack(player &  p)
 
 //spell_card methods
 //constructor
+spell_card::spell_card()
+{
+
+}
 spell_card::spell_card(char * unique_name):base_card(unique_name)
 {
     spell = NULL;
@@ -181,20 +215,25 @@ void spell_card::cast_spell(player &p)
     p.got_spell(spell);
 }
 
-void spell_card::set_update_spell(char ** allspells, int num_spells)
+void spell_card::change_card(char ** allspells, int num_spells)
 {
     if(spell)
         delete[] spell;
+    sleep(1);
     srand(time(0));
     int select = rand()%num_spells;
-    char * newspell = *allspells+select;
+    char * newspell = *(allspells+select);
     spell = new char[strlen(newspell)+1];
     strcpy(spell,newspell);
+
 
 }
 
 //defence-card methods
 //constructor
+defense_card::defense_card()
+{
+}
 defense_card::defense_card(char * unique_name):base_card(unique_name)
 {
     spell = NULL;
@@ -205,7 +244,34 @@ defense_card::~defense_card()
 {
 
 }
-
+int defense_card::get_strength()
+{
+    return strength;
+}
+char * defense_card::get_spell()
+{
+    return spell;
+}
+void defense_card::change_card(char ** allspells, int num_spells)
+{
+    strength =0;
+    if(spell)
+        delete[] spell;
+    srand(time(0));
+    sleep(1);
+    int ss=rand()%2;
+    if(ss==0)
+    {
+        int select = rand()%num_spells;
+        char * newspell = *(allspells+select);
+        spell = new char[strlen(newspell)+1];
+        strcpy(spell,newspell);
+    }
+    else
+    {
+        strength = rand()%ATTACK_LEVEL +1;
+    }
+}
 
 //copy constructor
 defense_card::defense_card(const defense_card & source)
