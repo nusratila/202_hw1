@@ -241,7 +241,6 @@ void player::play_attack(deck & discard_deck, player & p,int card_type,char * ca
     {
         discard_deck.add_card(bc);
         if(bc->which_card()==0)
-            //action_card  ac = (action_card)(*bc);
             bc->do_attack(p);
 
         if(bc->which_card()==1)
@@ -310,4 +309,64 @@ void player::play_update_card(char ** allspells,int num_spells,char* card_id,int
     base_card * bc = find_delete_card(head[card_type],card_id,false);
     if(bc)
         bc->change_card( allspells, num_spells);
+}
+
+
+//wrapper for remove_card method. based on the provided id this will remove the card from hand of player.
+int player::remove_card(char * id)
+{
+    int index = 0 ;
+    node * thead = *head;
+    return remove_card(id, thead,index);
+}
+//recursive method for remove_card method. returns 0 on failure to find and delete and 1 for delete.
+int player::remove_card(char *id , node * &head, int &index)
+{
+    int res = 0 ;
+    if(index==3)
+        return res;
+    if(!head)
+    {
+        remove_card( id, *(this->head + index),++index);
+    }
+    else
+    {
+        res = remove_card(id,head->next,index);
+        if(!strcmp(id,head->data->get_card_id()))
+            {
+                node * temp = head;
+                head = head->next;
+                delete temp->data;
+                delete temp;
+                res = 1;
+            }
+    }
+    return res;
+}
+
+
+base_card * player::retrieve_card(char * id)
+{
+    int index = 0 ;
+    node * thead = *head;
+    return retrieve_card(id, thead,index);
+}
+
+
+base_card * player::retrieve_card(char *id , node * &head, int &index)
+{
+    base_card * bc = NULL;
+    if(index==3)
+        return bc;
+    if(!head)
+    {
+        remove_card( id, *(this->head + index),++index);
+    }
+    else
+    {
+        if(!strcmp(id,head->data->get_card_id()))
+            bc = head->data;
+        bc = retrieve_card(id,head->next,index);
+    }
+    return bc;
 }

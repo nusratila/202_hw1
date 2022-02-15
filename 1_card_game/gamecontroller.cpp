@@ -11,6 +11,17 @@ game_controller::game_controller()
 {
 
 }
+game_controller::game_controller(const game_controller & source)
+{
+        b_deck;              //one deck is used as board or discard pile
+        deck * a_deck;              //other one for picking up card.
+    /*
+        player * p[2];
+        base_card ** all_cards;     // array of all cards it instantiates with generate_deck() method call.
+        char ** allspells;
+        */
+
+}
 game_controller::game_controller(int num_card )
 {
     num_of_card_each_type = num_card;   //constructor initialized the number of card each type
@@ -72,8 +83,9 @@ game_controller::~game_controller()
 
 // this method is for generating deck of cards. it will randomize the cards
 // card id to be read from the id.txt file.
-void game_controller::generate_deck()
+int game_controller::generate_deck()
 {
+
     cout<<"Generating deck of cards. the delay of generation is added to ensure better randomization.  "<<endl;
 
     int totalcards = 3*num_of_card_each_type;
@@ -98,7 +110,7 @@ void game_controller::generate_deck()
     else
     {
         cout<<"can not open id file"<<endl;
-        return;
+        return 0;
     }
 
     // generating a list of index.
@@ -150,8 +162,9 @@ void game_controller::generate_deck()
 
 
     }
-    cout<<"Deck of cards generated. "<< totalcards<<" cards added to the deck. "<<endl;
+
     delete allids;
+    return totalcards;
 }
 void game_controller::show_deck()
 {
@@ -205,7 +218,7 @@ void game_controller::game_play()
     cout<< "player can choose to get a new card of the same type too but in that case player will not be able to play any card against the opponent. ";
     cout<<endl;
     cout<< "INITIALIZING the Game now... "<<endl;
-    generate_deck();
+    //generate_deck();
     cout<<"\nGathering Game information"<<endl;
     cout<<"Enter the number of cards each player can hold: ";
     cin.get(userinput,INPUT_SIZE,'\n');

@@ -13,7 +13,7 @@ void  operator delete (void * memory, size_t size)
 //constructor
 practice_list :: practice_list()
 {
-    head_array = new node*[3];
+    head_array = new nogit gde*[3];
     head_array[0] = NULL;
     head_array[1] = NULL;
     head_array[2] = NULL;
