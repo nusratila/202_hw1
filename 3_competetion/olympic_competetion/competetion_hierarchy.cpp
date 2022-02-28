@@ -1,6 +1,7 @@
 //Name: Nustrat Jahan Ila.
 //Date: 2/18/22
 //Assignemnt 3 : Creating a competition heirarchy of class using Operator overloading and using exception handling
+// the file contains only the base class and the three derived hierarchy class.
 
 #include "olympic_competetion.h"
 
@@ -33,6 +34,7 @@ athlete & athlete::operator=(const athlete & source)     // = operator overload 
     top_score = source.top_score;
     return *this;
 }
+
 //constructor with all the argument.
 athlete::athlete(char * ath_name, int score, int wins)
 {
@@ -44,6 +46,8 @@ athlete::athlete(char * ath_name, int score, int wins)
     no_of_wins = wins;
     top_score = score;
 }
+
+
 athlete::~athlete() ////destructor
 {
     if(name)
@@ -241,6 +245,17 @@ hockey::hockey(char * name , int score , int wins,int foul_count, int shot_targe
     shot_on_target = shot_target;
 }
 
+int hockey :: add_foul(int x)
+{
+    no_of_foul += x;
+    return no_of_foul;
+}
+
+int hockey :: add_shot(int x)
+{
+    shot_on_target += x;
+    return shot_on_target;
+}
 
 istream & operator>>(istream& is,  hockey& athlete)  // cin overload
 {

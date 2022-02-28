@@ -1,7 +1,7 @@
 //Name: Nustrat Jahan Ila.
 //Date: 2/18/22
 //Assignemnt 3 : This file contains the implimentation of the custom tree ADT.
-
+// This file implements the custom
 
 #include "olympic_competetion.h"
 
@@ -10,6 +10,7 @@ ski_jumping_athlete_tree :: ski_jumping_athlete_tree()
 {
     t_root = new tree_node;
     t_root->color = 0;
+    t_root->parent = nullptr;
     t_root->left = nullptr;
     t_root->right = nullptr;
     root = t_root;
@@ -19,56 +20,77 @@ ski_jumping_athlete_tree :: ski_jumping_athlete_tree()
 ski_jumping_athlete_tree :: ~ski_jumping_athlete_tree()
 
 {
-
+    delete t_root;
+    delete root;
 }
 
 
  //For balancing the tree after insertion
  //one letter var name used here to easy read.
-void ski_jumping_athlete_tree :: balance_after_insert(tree_node * k) {
+//wrapper function for balancing tree after every insert.
+void ski_jumping_athlete_tree :: balance_after_insert(tree_node * k)
+{
     tree_node * u;
-    while (k->parent->color == 1) {
-      if (k->parent == k->parent->parent->right) {
-        u = k->parent->parent->left;
-        if (u->color == 1) {
-          u->color = 0;
-          k->parent->color = 0;
-          k->parent->parent->color = 1;
-          k = k->parent->parent;
-        } else {
-          if (k == k->parent->left) {
-            k = k->parent;
-            rightRotate(k);
-          }
-          k->parent->color = 0;
-          k->parent->parent->color = 1;
-          leftRotate(k->parent->parent);
-        }
-      } else {
-        u = k->parent->parent->right;
-
-        if (u->color == 1) {
-          u->color = 0;
-          k->parent->color = 0;
-          k->parent->parent->color = 1;
-          k = k->parent->parent;
-        } else {
-          if (k == k->parent->right) {
-            k = k->parent;
-            leftRotate(k);
-          }
-          k->parent->color = 0;
-          k->parent->parent->color = 1;
-          rightRotate(k->parent->parent);
-        }
-      }
-      if (k == root) {
-        break;
-      }
-    }
+    balance_after_insert(k,u);
     root->color = 0;
-  }
+}
 
+// For balancing the tree after insertion recursive function.
+void ski_jumping_athlete_tree :: balance_after_insert(tree_node *& k,tree_node * &u)
+{
+    if(!k->parent)
+        return;
+    if(k->parent->color != 1)
+        return;
+    if (k->parent == k->parent->parent->right)
+    {
+        u = k->parent->parent->left;
+        if (u->color == 1)
+        {
+            u->color = 0;
+            k->parent->color = 0;
+            k->parent->parent->color = 1;
+            balance_after_insert(k->parent->parent,u);      //recursive function call
+        }
+        else
+        {
+            if (k == k->parent->left)
+            {
+                k = k->parent;
+                rightRotate(k);
+            }
+            k->parent->color = 0;
+            k->parent->parent->color = 1;
+            leftRotate(k->parent->parent);
+        }
+    }
+    else
+    {
+        u = k->parent->parent->right;
+        if (u->color == 1)
+        {
+            u->color = 0;
+            k->parent->color = 0;
+            k->parent->parent->color = 1;
+            balance_after_insert(k->parent->parent,u);       //recursive function call
+        }
+        else
+        {
+            if (k == k->parent->right)
+            {
+                k = k->parent;
+                leftRotate(k);
+            }
+            k->parent->color = 0;
+            k->parent->parent->color = 1;
+            rightRotate(k->parent->parent);
+        }
+    }
+    if (k == root)
+    {
+        return;
+    }
+}
 
 // display tree function with recursive call.
 void ski_jumping_athlete_tree :: display_tree(tree_node * root, string indent, bool last)
@@ -125,16 +147,28 @@ void ski_jumping_athlete_tree :: delete_all()
         delete_all(root);
 }
 
+int ski_jumping_athlete_tree :: remove_athlete(char * t_name)
+{
+    // Not implemented as not required as part of this project for balance tree.
+    cout<<"delete item from the tree is not implemented "<<endl;
 
+
+}
 //recursive fuction for deleting all items from the tree
-void ski_jumping_athlete_tree :: delete_all(tree_node* x)
+void ski_jumping_athlete_tree :: delete_all(tree_node* &x)
 {
     if (x == nullptr)
         return;
-    delete_all(x->left);
-    delete_all(x->right);
-    cout<<"deleting: "<<x->data;
-    delete x;
+    if(x->left)
+        delete_all(x->left);
+    if(x->right)
+        delete_all(x->right);
+    if(!x->left && !x->right)
+    {
+        delete x;
+        x=nullptr;
+
+    }
 }
 
 // wrapper funciont for display the tree.

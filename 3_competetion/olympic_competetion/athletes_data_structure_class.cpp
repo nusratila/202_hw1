@@ -1,7 +1,8 @@
 //Name: Nustrat Jahan Ila.
 //Date: 2/18/22
 //Assignemnt 3 : This file covers 2 STL data structure implementation one is List and the other is vector.
-
+// this includes the implementation of 2 data structure one is based on List and the Other is Vector.
+// the third custom tree implementation is in another file.
 
 #include "olympic_competetion.h"
 

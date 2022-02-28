@@ -1,7 +1,7 @@
 //Name: Nustrat Jahan Ila.
 //Date: 2/18/22
 //Assignemnt 3 : This file contain the menu class where all the user interaction and menu items are organized.
-
+// this file contains implementation of the menu class which manages the user interaction and 3 different typeos data collection.
 
 
 
@@ -25,21 +25,28 @@ void user_class::ski_jump_menu()
         ski_jumping sj;
         cout<<"Enter ski jumping athlete details no space in name and no extra space"<<endl;
         cout<<"name[string no space] topscore[int] number_of_wins[int] height[int] distance[int]"<<endl;
+        //exception handling while getting the input from user.
         try
         {
             cin>>sj;
             cout<<"Adding the athlete to collection"<<endl;
+            sja.add_athlete(sj);
         }
         catch(invalid_argument &e)
         {
             cout<<e.what();
         }
-        sja.add_athlete(sj);
         ski_jump_menu();
     }
     else if(option2== '2')
     {
         cout<<"delete"<<endl;
+        char* t_name = new char[101];
+        cout<<"Enter athlete name to remove from collection"<<endl;
+        cin>>t_name;
+        cin.ignore(101,'\n');
+        sja.remove_athlete(t_name);
+        delete [] t_name;
         ski_jump_menu();
 
     }
@@ -89,16 +96,17 @@ void user_class::hockey_menu()
         hockey h;
         cout<<"Enter Hockey athlete details no space in name and no extra space"<<endl;
         cout<<"name[string no space] topscore[int] number_of_wins[int] foul[int] shot_on_target[int]"<<endl;
+        //exception handling while getting the input from user.
         try
         {
             cin>>h;
             cout<<"Adding the athlete to collection"<<endl;
+            ha.add_athlete(h);
         }
         catch(invalid_argument &e)
         {
             cout<<e.what();
         }
-        ha.add_athlete(h);
         hockey_menu();
     }
     else if(option2== '2')
@@ -119,6 +127,20 @@ void user_class::hockey_menu()
         cin>>t_name;
         cin.ignore(101,'\n');
         hockey * t_ha = ha.find_athlete(t_name);
+        cout<<"Do you want to add shot/foul for this athlete press y to update"<<endl;
+        char t_option;
+        cin>>t_option;
+        t_option = toupper(t_option);
+        if(t_option == 'Y')
+        {
+            int foul_shot;
+            cout<<"how many foul to be added for this athlete: ";
+            cin>>foul_shot;
+            t_ha->add_foul(foul_shot);
+            cout<<"how many shot on target to be added for this athlete: ";
+            cin>>foul_shot;
+            t_ha->add_shot(foul_shot);
+        }
         t_ha->display();
         delete [] t_name;
         hockey_menu();
@@ -154,16 +176,17 @@ void user_class::ice_dance_menu()
         ice_dancing id;
         cout<<"Enter Ice Dance athlete details no space in name and no extra space"<<endl;
         cout<<"name[string no space] topscore[int] number_of_wins[int] style[string no space] perf_quality[option ABCD]"<<endl;
+        //exception handling while getting the input from user.
         try
         {
             cin>>id;
             cout<<"Adding the athlete to collection"<<endl;
+            ida.add_athlete(id);
         }
         catch(invalid_argument &e)
         {
             cout<<e.what();
         }
-        ida.add_athlete(id);
         ice_dance_menu();
     }
     else if(option2== '2')

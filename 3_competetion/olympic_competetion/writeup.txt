@@ -1,0 +1,6 @@
+
+To understand == operator in depth i have used this to compare some data not all and return true
+or false based on that. for example name and style is not used for comparing equality.
+
+using exception this program can identify project specific invalid input such as grade.
+here only exceptable argument is A-D any other value will be treated as exception.
