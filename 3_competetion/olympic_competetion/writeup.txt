@@ -2,5 +2,27 @@
 To understand == operator in depth i have used this to compare some data not all and return true
 or false based on that. for example name and style is not used for comparing equality.
 
+
+
+some unexpected behaviour may be observed if the tree recieved same athlete twice. tree insert is not properly optimized for recieving equal data. 
+
+
+To me the most interesting and useful override is cin and cout. by overloading this function i can simply get data from user easily and even i can print the data as i want for my custom ADT. 
+
+
+delete and deleteall for tree has some bug and not always working properly. 
+
 using exception this program can identify project specific invalid input such as grade.
 here only exceptable argument is A-D any other value will be treated as exception.
+exception is used in giving user input. and when it is expected any integer even if user give a floating point number it will not complain and it will 
+save only the integer portion of it. for any invalid input user will be prompted with different message to give the right type of data and repeat the next steps. 
+
+
+i have added couple of sample function with the search option for the hockey class and as the hockey collection class search method returns a pointer to the object changing data of that object
+eventually stays persistant. and displaying that later should show the change.
+
+probably my code can be optimized more for better memory management. I have some places where the argument is used as pass by value and changing those to pass by reference could create opportunity 
+for saving lots of temporary copy of objects. and also some data member can be used as pointer instead of using regular objects. 
+
+GDB was essential for this project as this is large enough to identify all the issues i have encountered throwout the development of the project. step by step debugging required in every step of the development. 
+the two thing i hav used most are putting a breakpoint and analyse the value of the variable and find out if the value is acceptable or meaningful. 
